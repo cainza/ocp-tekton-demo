@@ -1,0 +1,85 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: demo-build-and-deploy
+spec:
+  resources:
+    - name: demo-repo
+      type: git
+    - name: demo-image
+      type: image
+  tasks:
+    - name: build-image
+      taskRef:
+        name: s2i-java-11
+        kind: ClusterTask
+      params:
+        - name: TLSVERIFY
+          value: "false"
+      resources:
+        inputs:
+          - name: source
+            resource: demo-repo
+        outputs:
+          - name: image
+            resource: demo-image
+    - name: create-ocp-resources
+      taskRef:
+        name: maven
+        kind: ClusterTask
+      resources:
+        inputs:
+          - name: source
+            resource: demo-repo
+      params:
+        - name: GOALS
+          value:
+            - "fabric8:resource"
+            - "fabric8:resource-apply"
+      runAfter:
+        - build-image
+    - name: deploy-demo-container
+      taskRef:
+        name: openshift-client
+        kind: ClusterTask
+      params:
+        - name: ARGS
+          value:
+            - rollout
+            - latest
+            - pipelinesdemo
+      runAfter:
+        - create-ocp-resources
+    - name: wait-for-demo-container-to-be-available
+      taskRef:
+        name: openshift-client
+        kind: ClusterTask
+      params:
+        - name: ARGS
+          value:
+            - rollout
+            - status
+            - dc/pipelinesdemo
+      runAfter:
+        - deploy-demo-container
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: demo-repo
+spec:
+  type: git
+  params:
+    - name: url
+      value: https://github.com/cainza/jenkins-ocp-java-pipeline-demo.git
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: demo-image
+spec:
+  type: image
+  params:
+    - name: url
+      value: image-registry.openshift-image-registry.svc:5000/cicd-demo/pipelinesdemo:latest

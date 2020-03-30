@@ -1,0 +1,286 @@
+Name:         demo-build-and-deploy-fu2las-build-demo-k944q-pod-lpjzl
+Namespace:    cicd-demo
+Priority:     0
+Node:         ip-10-0-167-63.eu-west-1.compute.internal/10.0.167.63
+Start Time:   Wed, 25 Mar 2020 12:52:42 +0200
+Labels:       app.kubernetes.io/managed-by=tekton-pipelines
+              operator.tekton.dev/provider-type=community
+              tekton.dev/pipeline=demo-build-and-deploy
+              tekton.dev/pipelineRun=demo-build-and-deploy-fu2las
+              tekton.dev/pipelineTask=build-demo
+              tekton.dev/task=maven-demo
+              tekton.dev/taskRun=demo-build-and-deploy-fu2las-build-demo-k944q
+Annotations:  k8s.v1.cni.cncf.io/networks-status:
+                [{
+                    "name": "openshift-sdn",
+                    "interface": "eth0",
+                    "ips": [
+                        "10.128.2.33"
+                    ],
+                    "dns": {},
+                    "default-route": [
+                        "10.128.2.1"
+                    ]
+                }]
+              manifestival: new
+              openshift.io/scc: restricted
+              tekton.dev/ready: READY
+              tekton.dev/release: devel
+Status:       Running
+IP:           10.128.2.33
+IPs:
+  IP:           10.128.2.33
+Controlled By:  TaskRun/demo-build-and-deploy-fu2las-build-demo-k944q
+Init Containers:
+  credential-initializer:
+    Container ID:  cri-o://3724e19b6a43b9711d7d6e8f42ae00c8e657de2f49fcaa9a164afca9435b3d93
+    Image:         quay.io/openshift-pipeline/tektoncd-pipeline-creds-init:v0.10.1
+    Image ID:      quay.io/openshift-pipeline/tektoncd-pipeline-creds-init@sha256:851fd079a51d62119cf6f9c21029232146cfdcf571e3123d2fd89ba9d26223fd
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /ko-app/creds-init
+    Args:
+      -docker-cfg=pipeline-dockercfg-f2zph
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Wed, 25 Mar 2020 12:52:50 +0200
+      Finished:     Wed, 25 Mar 2020 12:52:50 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      HOME:  /tekton/home
+    Mounts:
+      /tekton/creds-secrets/pipeline-dockercfg-f2zph from tekton-internal-secret-volume-pipeline-dockercfg-f2zph (rw)
+      /tekton/home from tekton-internal-home (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from pipeline-token-jwwr6 (ro)
+      /workspace from tekton-internal-workspace (rw)
+  place-tools:
+    Container ID:  cri-o://471c6f81e4ad19e3fbdf476863934df079e7d06d029fc79483a14097c8551aa9
+    Image:         quay.io/openshift-pipeline/tektoncd-pipeline-entrypoint:v0.10.1
+    Image ID:      quay.io/openshift-pipeline/tektoncd-pipeline-entrypoint@sha256:bba0de567eaf4d85109c088e0a52aacb618ef63f945e2ecc995b4ddb3123d5c6
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      cp
+      /ko-app/entrypoint
+      /tekton/tools/entrypoint
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Wed, 25 Mar 2020 12:52:52 +0200
+      Finished:     Wed, 25 Mar 2020 12:52:52 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /tekton/tools from tekton-internal-tools (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from pipeline-token-jwwr6 (ro)
+Containers:
+  step-git-source-demo-repo-fsp65:
+    Container ID:  cri-o://a49efc442c930b8a688acbf0a1b00c018db70ff48356a408eed676acf569b6c2
+    Image:         quay.io/openshift-pipeline/tektoncd-pipeline-git-init:v0.10.1
+    Image ID:      quay.io/openshift-pipeline/tektoncd-pipeline-git-init@sha256:0956ae04297fe4740af495ec1d6d51bd7fbd79686f5d5a4ea09ca44c4e9838cf
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /tekton/tools/entrypoint
+    Args:
+      -wait_file
+      /tekton/downward/ready
+      -wait_file_content
+      -post_file
+      /tekton/tools/0
+      -termination_path
+      /tekton/termination
+      -entrypoint
+      /ko-app/git-init
+      --
+      -url
+      https://github.com/cainza/jenkins-ocp-java-pipeline-demo.git
+      -revision
+      master
+      -path
+      /workspace
+    State:          Terminated
+      Reason:       Completed
+      Message:      [{"name":"","digest":"","key":"commit","value":"d69b4c76d31119b3df880969cf6a08b47803c862","resourceRef":{}},{"name":"","digest":"","key":"StartedAt","value":"2020-03-25T10:52:57Z","resourceRef":{}}]
+      Exit Code:    0
+      Started:      Wed, 25 Mar 2020 12:52:53 +0200
+      Finished:     Wed, 25 Mar 2020 12:52:58 +0200
+    Ready:          False
+    Restart Count:  0
+    Requests:
+      cpu:                0
+      ephemeral-storage:  0
+      memory:             0
+    Environment:
+      HOME:                  /tekton/home
+      TEKTON_RESOURCE_NAME:  demo-repo
+    Mounts:
+      /tekton/downward from tekton-internal-downward (rw)
+      /tekton/home from tekton-internal-home (rw)
+      /tekton/tools from tekton-internal-tools (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from pipeline-token-jwwr6 (ro)
+      /workspace from tekton-internal-workspace (rw)
+  step-mvn-settings:
+    Container ID:  cri-o://957e826c1767cca422000e3609acb8facea33ff3b563513b7bcb2fba33bd48f5
+    Image:         registry.access.redhat.com/ubi8/ubi-minimal:latest
+    Image ID:      registry.access.redhat.com/ubi8/ubi-minimal@sha256:01b8fb7b3ad16a575651a4e007e8f4d95b68f727b3a41fc57996be9a790dc4fa
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /tekton/tools/entrypoint
+    Args:
+      -wait_file
+      /tekton/tools/0
+      -post_file
+      /tekton/tools/1
+      -termination_path
+      /tekton/termination
+      -entrypoint
+      /bin/bash
+      --
+      -c
+      [[ -f /.m2/settings.xml ]] && \
+      echo 'using existing /.m2/settings.xml' && \
+      cat /.m2/settings.xml && exit 0
+
+      [[ -n '' ]] && \
+      cat > /.m2/settings.xml <<EOF
+      <settings>
+        <mirrors>
+          <mirror>
+            <id>mirror.default</id>
+            <name>mirror.default</name>
+            <url></url>
+            <mirrorOf>*</mirrorOf>
+          </mirror>
+        </mirrors>
+      </settings>
+      EOF
+
+      [[ -f /.m2/settings.xml ]] && cat /.m2/settings.xml
+      [[ -f /.m2/settings.xml ]] || echo skipping settings
+    State:          Terminated
+      Reason:       Completed
+      Message:      [{"name":"","digest":"","key":"StartedAt","value":"2020-03-25T10:52:59Z","resourceRef":{}}]
+      Exit Code:    0
+      Started:      Wed, 25 Mar 2020 12:52:54 +0200
+      Finished:     Wed, 25 Mar 2020 12:52:59 +0200
+    Ready:          False
+    Restart Count:  0
+    Requests:
+      cpu:                0
+      ephemeral-storage:  0
+      memory:             0
+    Environment:
+      HOME:  /tekton/home
+    Mounts:
+      /.m2 from m2-repository (rw)
+      /tekton/home from tekton-internal-home (rw)
+      /tekton/home/.docker from docker-config (rw)
+      /tekton/tools from tekton-internal-tools (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from pipeline-token-jwwr6 (ro)
+      /workspace from tekton-internal-workspace (rw)
+  step-mvn-goals:
+    Container ID:  cri-o://cf6413cfdf9d98131127b016a27e1ce0e6d417cc53f4421d61ff69aef61a70ce
+    Image:         gcr.io/cloud-builders/mvn
+    Image ID:      gcr.io/cloud-builders/mvn@sha256:9a0a9ef75ba936baf5840dfaea9d08b4e8a73793d56225fd04ae3bc10a7add49
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /tekton/tools/entrypoint
+    Args:
+      -wait_file
+      /tekton/tools/1
+      -post_file
+      /tekton/tools/2
+      -termination_path
+      /tekton/termination
+      -entrypoint
+      /usr/bin/mvn
+      --
+      package
+      fabric8:build
+    State:          Running
+      Started:      Wed, 25 Mar 2020 12:52:55 +0200
+    Ready:          True
+    Restart Count:  0
+    Requests:
+      cpu:                0
+      ephemeral-storage:  0
+      memory:             0
+    Environment:
+      HOME:  /tekton/home
+    Mounts:
+      /.m2 from m2-repository (rw)
+      /tekton/home from tekton-internal-home (rw)
+      /tekton/tools from tekton-internal-tools (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from pipeline-token-jwwr6 (ro)
+      /workspace from tekton-internal-workspace (rw)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             False
+  ContainersReady   False
+  PodScheduled      True
+Volumes:
+  tekton-internal-workspace:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:
+    SizeLimit:  <unset>
+  tekton-internal-home:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:
+    SizeLimit:  <unset>
+  tekton-internal-secret-volume-pipeline-dockercfg-f2zph:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  pipeline-dockercfg-f2zph
+    Optional:    false
+  tekton-internal-tools:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:
+    SizeLimit:  <unset>
+  tekton-internal-downward:
+    Type:  DownwardAPI (a volume populated by information about the pod)
+    Items:
+      metadata.annotations['tekton.dev/ready'] -> ready
+  m2-repository:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:
+    SizeLimit:  <unset>
+  docker-config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      docker
+    Optional:  false
+  pipeline-token-jwwr6:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  pipeline-token-jwwr6
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type    Reason     Age        From                                                Message
+  ----    ------     ----       ----                                                -------
+  Normal  Scheduled  <unknown>  default-scheduler                                   Successfully assigned cicd-demo/demo-build-and-deploy-fu2las-build-demo-k944q-pod-lpjzl to ip-10-0-167-63.eu-west-1.compute.internal
+  Normal  Pulled     34s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Container image "quay.io/openshift-pipeline/tektoncd-pipeline-creds-init:v0.10.1" already present on machine
+  Normal  Created    34s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Created container credential-initializer
+  Normal  Started    33s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Started container credential-initializer
+  Normal  Started    32s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Started container place-tools
+  Normal  Pulled     32s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Container image "quay.io/openshift-pipeline/tektoncd-pipeline-entrypoint:v0.10.1" already present on machine
+  Normal  Created    32s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Created container place-tools
+  Normal  Pulling    31s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Pulling image "registry.access.redhat.com/ubi8/ubi-minimal:latest"
+  Normal  Pulled     31s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Container image "quay.io/openshift-pipeline/tektoncd-pipeline-git-init:v0.10.1" already present on machine
+  Normal  Created    31s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Created container step-git-source-demo-repo-fsp65
+  Normal  Started    31s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Started container step-git-source-demo-repo-fsp65
+  Normal  Pulled     30s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Successfully pulled image "registry.access.redhat.com/ubi8/ubi-minimal:latest"
+  Normal  Created    30s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Created container step-mvn-settings
+  Normal  Started    30s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Started container step-mvn-settings
+  Normal  Pulling    30s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Pulling image "gcr.io/cloud-builders/mvn"
+  Normal  Pulled     29s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Successfully pulled image "gcr.io/cloud-builders/mvn"
+  Normal  Created    29s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Created container step-mvn-goals
+  Normal  Started    29s        kubelet, ip-10-0-167-63.eu-west-1.compute.internal  Started container step-mvn-goals
